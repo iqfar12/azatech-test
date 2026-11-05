@@ -1,10 +1,3 @@
-<!--
-  CATATAN UNTUK PEMILIK REPO (hapus komentar ini sebelum submit):
-  - Lengkapi bagian 3 dengan prompt lain yang kamu pakai (salin apa adanya).
-  - Isi bagian 4 dengan jujur: apa yang kamu tulis / ubah sendiri setelah menjalankan
-    dan mereview kode ini. Reviewer akan menanyakan bagian yang dikerjakan AI.
--->
-
 # AI_USAGE
 
 ## 1. Tools dan model AI yang dipakai
@@ -31,10 +24,9 @@ Verifikasi yang dilakukan AI di lingkungannya (tanpa akses Packagist/npm/Docker)
 
    (dengan lampiran `Technical_Test_Fullstack_Developer.pdf`)
 
-2. > _(tambahkan prompt berikutnya di sini, mis. saat memperbaiki test yang gagal)_
-
-3. > _…_
 
 ## 4. Bagian kode yang saya tulis atau ubah sendiri
 
-- _(isi setelah review & perbaikan — mis. "memperbaiki test X yang gagal karena …", "mengubah TTL token", "menambahkan …")_
+- Configurasi untuk local running tanpa docker
+- setup environment
+- database seeder

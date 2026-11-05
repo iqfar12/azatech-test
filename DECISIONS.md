@@ -1,11 +1,3 @@
-<!--
-  CATATAN UNTUK PEMILIK REPO (hapus komentar ini sebelum submit):
-  Soal meminta DECISIONS.md dijawab "dengan kata-kata Anda sendiri".
-  Draf ini disusun bersama AI berdasarkan kode di repo — baca, pastikan kamu paham
-  setiap poin, lalu tulis ulang dengan gayamu sendiri. Reviewer akan mencocokkan
-  isi file ini dengan kode dan menanyakannya di sesi live.
--->
-
 # DECISIONS
 
 ## a. Bagaimana mencegah stok minus saat dua order masuk bersamaan?

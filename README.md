@@ -1,11 +1,9 @@
 # Azatech Online Shop — Order Management
 
-[![CI](https://github.com/OWNER/REPO/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/ci.yml)
+[![CI](https://github.com/iqfar12/azatech-test/actions/workflows/ci.yml/badge.svg)](https://github.com/iqfar12/azatech-test/actions/workflows/ci.yml)
 
 Technical test **Senior Fullstack Developer** — PT Laksmada Aza Simetri.
 Sistem online shop untuk mengelola produk, pelanggan, dan order multi-item dengan siklus status, dua role, pemrosesan asinkron, dan konsistensi stok saat banyak kasir membuat order bersamaan.
-
-> Ganti `OWNER/REPO` pada badge di atas dengan nama repository GitHub kamu.
 
 ## Tech stack & alasan
 
@@ -191,4 +189,4 @@ Status code: 200, 201, 204, 401, 403, 404, 409 (transisi tidak valid / key masih
 
 ## AI Usage
 
-Lihat **[AI_USAGE.md](./AI_USAGE.md)** (menggantikan bagian AI Usage di README sesuai lampiran soal).
+Lihat **[AI_USAGE.md](./AI_USAGE.md)** 
