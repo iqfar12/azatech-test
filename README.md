@@ -5,6 +5,8 @@
 Technical test **Senior Fullstack Developer** — PT Laksmada Aza Simetri.
 Sistem online shop untuk mengelola produk, pelanggan, dan order multi-item dengan siklus status, dua role, pemrosesan asinkron, dan konsistensi stok saat banyak kasir membuat order bersamaan.
 
+NOTE: Git user yang tercantum di commit sepertinya bukan git saya yang di repo, mungkin karena git init dilakukan di claude namun sudah saya ubah dengan Commit perbaikan README.md ini
+
 ## Tech stack & alasan
 
 | Bagian | Pilihan | Alasan |
