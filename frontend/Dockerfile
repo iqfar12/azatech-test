@@ -10,7 +10,8 @@ COPY . .
 # Empty = same origin: nginx below proxies /api to the api service.
 ARG VITE_API_BASE_URL=""
 ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
-RUN npm run build
+# Type-checking is a CI gate (npm run type-check); the image only needs the bundle.
+RUN npm run build:bundle
 
 # ---- 2. runtime: static files on an unprivileged nginx (runs as uid 101, port 8080) ----
 FROM nginxinc/nginx-unprivileged:1.27-alpine AS runtime
