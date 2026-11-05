@@ -23,6 +23,8 @@ return new class extends Migration
             $table->string('status', 20); // processing | completed
             $table->unsignedSmallInteger('response_status')->nullable();
             $table->jsonb('response_body')->nullable();
+            // Fencing token: only the request holding the current token may complete or release the key.
+            $table->uuid('lock_token');
             $table->timestampTz('locked_at');
             $table->timestampTz('expires_at')->index();
             $table->timestampsTz();
