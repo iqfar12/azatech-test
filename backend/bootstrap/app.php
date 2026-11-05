@@ -21,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Request id must run first so every log line (including auth failures) carries it.
         $middleware->prepend(AssignRequestId::class);
         $middleware->api(prepend: [ForceJsonResponse::class]);
+        $middleware->throttleApi('api');
 
         // We are a pure token API: never redirect unauthenticated users to a "login" route.
         $middleware->redirectGuestsTo(fn () => null);
