@@ -127,7 +127,7 @@ Laporan dihitung **satu query per laporan** di PostgreSQL (`GROUP BY`, `generate
 **Keputusan.** Tabel `idempotency_keys` di PostgreSQL (`IdempotencyService`):
 - Key **wajib** UUID, discope per `user_id` + endpoint (`orders.create`).
 - **Klaim** = satu `INSERT … ON CONFLICT DO NOTHING RETURNING id` (status `processing`), di-commit sendiri sehingga request duplikat langsung melihatnya.
-- Pekerjaan bisnis + update record menjadi `completed` (menyimpan status & body response) berjalan dalam **satu transaksi** → order dan penanda idempotensi commit atau rollback bersama. Ini alasan utama memilih PostgreSQL dibanding Redis.
+- Pekerjaan bisnis + update record menjadi `completed` (menyimpan status & body response di kolom `json` — bukan `jsonb`, agar urutan key dan isi response yang diputar ulang identik) berjalan dalam **satu transaksi** → order dan penanda idempotensi commit atau rollback bersama. Ini alasan utama memilih PostgreSQL dibanding Redis.
 - Fingerprint = SHA-256 dari payload yang sudah divalidasi & dinormalisasi (urutan key JSON, tipe string/angka, huruf besar UUID tidak berpengaruh).
 - **Perilaku:**
   - key + payload sama, sudah selesai → response tersimpan diputar ulang (status & body identik) + header `Idempotent-Replayed: true`;

@@ -22,7 +22,9 @@ return new class extends Migration
             $table->char('request_fingerprint', 64);
             $table->string('status', 20); // processing | completed
             $table->unsignedSmallInteger('response_status')->nullable();
-            $table->jsonb('response_body')->nullable();
+            // `json` (not `jsonb`): keeps the stored body byte-for-byte, incl. key order,
+            // so a replay is identical to the original response.
+            $table->json('response_body')->nullable();
             // Fencing token: only the request holding the current token may complete or release the key.
             $table->uuid('lock_token');
             $table->timestampTz('locked_at');

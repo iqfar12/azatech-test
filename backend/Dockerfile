@@ -23,7 +23,8 @@ RUN install-php-extensions pdo_pgsql pcntl intl zip opcache
 
 ARG UID=10001
 # Non-root user; drop the CAP_NET_BIND_SERVICE capability (we listen on 8000, not 80/443).
-RUN addgroup -g ${UID} app \
+RUN apk add --no-cache libcap \
+    && addgroup -g ${UID} app \
     && adduser -D -u ${UID} -G app app \
     && setcap -r /usr/local/bin/frankenphp \
     && mkdir -p /data/caddy /config/caddy \

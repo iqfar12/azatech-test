@@ -26,7 +26,11 @@ final class OrderIndexRequest extends ListRequest
             'status' => ['sometimes', 'nullable', Rule::enum(OrderStatus::class)],
             'customer_id' => ['sometimes', 'nullable', 'uuid'],
             'date_from' => ['sometimes', 'nullable', 'date_format:Y-m-d'],
-            'date_to' => ['sometimes', 'nullable', 'date_format:Y-m-d', 'after_or_equal:date_from'],
+            // Only compare when both are given; "after_or_equal:date_from" alone would fail for ?date_to=… only.
+            'date_to' => array_merge(
+                ['sometimes', 'nullable', 'date_format:Y-m-d'],
+                $this->filled('date_from') ? ['after_or_equal:date_from'] : [],
+            ),
         ];
     }
 }

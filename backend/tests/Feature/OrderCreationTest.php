@@ -128,6 +128,8 @@ it('filters the order list by status and date', function () {
     $today = now('Asia/Jakarta')->toDateString();
     $this->getJson("/api/orders?date_from={$today}&date_to={$today}")->assertJsonCount(2, 'data');
     $this->getJson('/api/orders?date_from=2000-01-01&date_to=2000-01-02')->assertJsonCount(0, 'data');
+    $this->getJson("/api/orders?date_to={$today}")->assertOk()->assertJsonCount(2, 'data');
+    $this->getJson('/api/orders?date_from=2026-01-05&date_to=2026-01-01')->assertStatus(422);
 });
 
 it('rate limits order creation per user', function () {

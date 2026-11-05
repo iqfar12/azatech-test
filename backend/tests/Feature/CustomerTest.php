@@ -66,11 +66,11 @@ it('lets an admin soft delete a customer', function () {
 
 it('paginates, searches and sorts customers', function () {
     actingAsRole('cashier');
-    Customer::factory()->create(['customer_name' => 'Zainal']);
+    Customer::factory()->create(['customer_name' => 'Zzqx Unik']);
     Customer::factory()->create(['customer_name' => 'Ani']);
     Customer::factory()->count(3)->create();
 
-    $this->getJson('/api/customers?search=zain')->assertJsonCount(1, 'data');
+    $this->getJson('/api/customers?search=zzqx')->assertJsonCount(1, 'data');
     $this->getJson('/api/customers?sort=-customer_name&per_page=1')
         ->assertJsonPath('meta.total', 5)
         ->assertJsonPath('meta.total_pages', 5);

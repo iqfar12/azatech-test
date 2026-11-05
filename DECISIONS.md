@@ -43,7 +43,10 @@ Karena itu `StockService::lockProducts()` mengurutkan id dan mengunci semua prod
 
 Catatan penting yang saya temukan sekaligus: `DB::transaction($callback, 3)` di Laravel akan **me-retry otomatis** transaksi yang gagal karena deadlock. Itu bagus untuk ketahanan, tetapi bisa menyembunyikan masalah urutan lock dari test biasa — karena itu urutan lock dijaga secara eksplisit, bukan mengandalkan retry.
 
-(Masalah kedua yang lebih kecil: rencana awal fencing token idempotency memakai perbandingan `locked_at`. Laravel menyimpan timestamp tanpa mikrodetik, sehingga dua klaim dalam detik yang sama tidak bisa dibedakan. Saya ganti dengan kolom `lock_token` UUID.)
+Dua masalah lebih kecil yang ketemu saat review:
+
+- **Replay idempotency tidak identik.** Kolom `response_body` awalnya `jsonb`. Saat mengecek di PostgreSQL, `jsonb` ternyata menyusun ulang urutan key (`{"success","message","data"}` disimpan sebagai `{"data","message","success"}`), sehingga response yang diputar ulang tidak sama persis dengan response pertama — dan test `returns the same response for a retried request…` (yang membandingkan dengan `toBe`) akan gagal. Saya ganti menjadi `json`, yang menyimpan teks apa adanya.
+- **Fencing token.** Rencana awal memakai perbandingan `locked_at`, padahal Laravel menyimpan timestamp tanpa mikrodetik sehingga dua klaim dalam detik yang sama tidak bisa dibedakan. Diganti kolom `lock_token` UUID.
 
 ## d. Bagian yang belum selesai atau masih lemah, dan langkah selanjutnya
 
