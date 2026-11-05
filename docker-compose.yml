@@ -1,0 +1,147 @@
+# docker compose up --build   →   web http://localhost:8080 · api http://localhost:8000 · docs http://localhost:8000/docs/api · mail http://localhost:8025
+#
+# All values below are LOCAL DEMO defaults. Override them with a `.env` file next to this
+# compose file (see .env.example) — never commit real credentials.
+name: azatech-online-shop
+
+x-api-build: &api-build
+  context: ./backend
+  target: runtime
+
+x-api-env: &api-env
+  APP_NAME: Azatech Online Shop
+  APP_ENV: ${APP_ENV:-production}
+  APP_DEBUG: ${APP_DEBUG:-false}
+  APP_KEY: ${APP_KEY:-}
+  APP_URL: ${APP_URL:-http://localhost:8000}
+  LOG_CHANNEL: json
+  LOG_LEVEL: ${LOG_LEVEL:-info}
+  DB_CONNECTION: pgsql
+  DB_HOST: db
+  DB_PORT: 5432
+  DB_DATABASE: ${DB_DATABASE:-online_shop}
+  DB_USERNAME: ${DB_USERNAME:-shop}
+  DB_PASSWORD: ${DB_PASSWORD:-shop-local-only}
+  REDIS_CLIENT: predis
+  REDIS_HOST: redis
+  REDIS_PORT: 6379
+  CACHE_STORE: redis
+  QUEUE_CONNECTION: redis
+  SESSION_DRIVER: array
+  MAIL_MAILER: smtp
+  MAIL_HOST: mailpit
+  MAIL_PORT: 1025
+  MAIL_FROM_ADDRESS: no-reply@azatech.local
+  CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:8080,http://localhost:5173}
+  API_DOCS_PUBLIC: "true"
+  SHOP_BUSINESS_TIMEZONE: Asia/Jakarta
+  SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD:-password}
+  SEED_CASHIER_PASSWORD: ${SEED_CASHIER_PASSWORD:-password}
+
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-online_shop}
+      POSTGRES_USER: ${DB_USERNAME:-shop}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-shop-local-only}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "8025:8025" # web UI
+      - "1025:1025" # SMTP
+
+  api:
+    build: *api-build
+    image: azatech/online-shop-api:local
+    environment:
+      <<: *api-env
+      RUN_MIGRATIONS: "true"
+      SEED_ON_BOOT: ${SEED_ON_BOOT:-true}
+    volumes:
+      - app-secrets:/app/storage/secrets
+    ports:
+      - "8000:8000"
+    depends_on:
+      db: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      mailpit: { condition: service_started }
+
+  worker:
+    build: *api-build
+    image: azatech/online-shop-api:local
+    command: ["php", "artisan", "queue:work", "redis", "--queue=notifications,default", "--sleep=1", "--max-time=3600"]
+    environment: *api-env
+    volumes:
+      - app-secrets:/app/storage/secrets
+    healthcheck:
+      disable: true
+    depends_on:
+      api: { condition: service_healthy }
+    restart: unless-stopped
+
+  scheduler:
+    build: *api-build
+    image: azatech/online-shop-api:local
+    command: ["php", "artisan", "schedule:work"]
+    environment: *api-env
+    volumes:
+      - app-secrets:/app/storage/secrets
+    healthcheck:
+      disable: true
+    depends_on:
+      api: { condition: service_healthy }
+    restart: unless-stopped
+
+  web:
+    build: ./frontend
+    ports:
+      - "8080:8080"
+    depends_on:
+      api: { condition: service_healthy }
+
+  # Backend test suite against the same PostgreSQL / Redis:
+  #   docker compose --profile test run --rm api-test
+  api-test:
+    profiles: ["test"]
+    build:
+      context: ./backend
+      target: test
+    environment:
+      DB_HOST: db
+      DB_DATABASE: online_shop_test
+      DB_USERNAME: ${DB_USERNAME:-shop}
+      DB_PASSWORD: ${DB_PASSWORD:-shop-local-only}
+      REDIS_HOST: redis
+    depends_on:
+      db: { condition: service_healthy }
+      redis: { condition: service_healthy }
+
+volumes:
+  db-data:
+  redis-data:
+  app-secrets:

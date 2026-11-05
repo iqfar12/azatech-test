@@ -21,21 +21,22 @@
         </include>
     </source>
     <php>
-        <!-- Tests run against a REAL PostgreSQL (locking semantics differ from SQLite). -->
-        <env name="APP_ENV" value="testing"/>
-        <env name="APP_DEBUG" value="false"/>
-        <env name="BCRYPT_ROUNDS" value="4"/>
-        <env name="LOG_CHANNEL" value="null"/>
+        <!-- Tests run against a REAL PostgreSQL (locking semantics differ from SQLite).
+             DB_* / REDIS_* are not forced so CI and docker can point them elsewhere. -->
+        <env name="APP_ENV" force="true" value="testing"/>
+        <env name="APP_DEBUG" force="true" value="false"/>
+        <env name="BCRYPT_ROUNDS" force="true" value="4"/>
+        <env name="LOG_CHANNEL" force="true" value="null"/>
         <env name="DB_CONNECTION" value="pgsql"/>
         <env name="DB_HOST" value="127.0.0.1"/>
         <env name="DB_PORT" value="5432"/>
         <env name="DB_DATABASE" value="online_shop_test"/>
         <env name="DB_USERNAME" value="shop"/>
-        <env name="DB_PASSWORD" value="shop"/>
-        <env name="CACHE_STORE" value="array"/>
-        <env name="QUEUE_CONNECTION" value="sync"/>
-        <env name="SESSION_DRIVER" value="array"/>
-        <env name="MAIL_MAILER" value="array"/>
+        <env name="DB_PASSWORD" value="shop-local-only"/>
+        <env name="CACHE_STORE" force="true" value="array"/>
+        <env name="QUEUE_CONNECTION" force="true" value="sync"/>
+        <env name="SESSION_DRIVER" force="true" value="array"/>
+        <env name="MAIL_MAILER" force="true" value="array"/>
         <env name="REDIS_CLIENT" value="predis"/>
     </php>
 </phpunit>
