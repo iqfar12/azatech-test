@@ -36,4 +36,10 @@ return [
     ],
 
     'api_docs_public' => (bool) env('API_DOCS_PUBLIC', true),
+
+    // Demo accounts created by the seeder (local / review environments only).
+    'seed' => [
+        'admin_password' => env('SEED_ADMIN_PASSWORD', 'password'),
+        'cashier_password' => env('SEED_CASHIER_PASSWORD', 'password'),
+    ],
 ];
